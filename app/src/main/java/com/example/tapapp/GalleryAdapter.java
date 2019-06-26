@@ -1,12 +1,16 @@
 package com.example.tapapp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 
@@ -14,17 +18,22 @@ public class GalleryAdapter extends BaseAdapter {
 
     ArrayList<String> images;
     private Context context;
+    private final RequestManager glide;
 
-    public GalleryAdapter(Context localContext) {
-        images = new ArrayList<String>();
+    public GalleryAdapter(Context localContext, RequestManager mGlideRequestManager) {
         context = localContext;
+        glide = mGlideRequestManager;
+//        images = new ArrayList<String>();
+        images = getAllShownImagesPath(context);
     }
 
-    void add(String path) {
-        images.add(path);
+    public GalleryAdapter(Context localContext, RequestManager mGlideRequestManager, ArrayList<String> localImages) {
+        context = localContext;
+        glide = mGlideRequestManager;
+        images = localImages;
     }
 
-    ArrayList<String> getImages() {
+    public ArrayList<String> getImages() {
         return images;
     }
 
@@ -45,43 +54,50 @@ public class GalleryAdapter extends BaseAdapter {
         ImageView picturesView;
         if (convertView == null) {
             picturesView = new ImageView(context);
-            picturesView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             picturesView
                     .setLayoutParams(new ExpandableGridView.LayoutParams(240, 240));
-            picturesView.setPadding(4, 4,4,4);
+
         } else {
             picturesView = (ImageView) convertView;
         }
 
-        Bitmap bm = decodeSampledBitmapFromUri(images.get(position), 240, 240);
-        picturesView.setImageBitmap(bm);
+        glide.load(images.get(position))
+                .placeholder(R.mipmap.ic_launcher).centerCrop()
+                .into(picturesView);
+
         return picturesView;
     }
 
-    public Bitmap decodeSampledBitmapFromUri(String path, int reqWidth, int reqHeight) {
-        Bitmap bm;
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inJustDecodeBounds = false;
-        bm = BitmapFactory.decodeFile(path, options);
-        return bm;
-    }
+    private ArrayList<String> getAllShownImagesPath(Context context) {
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+        ArrayList<String> listOfAllImages = new ArrayList<String>();
+        String absolutePathOfImage;
 
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+        String[] projection = { MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
 
-        if (height > reqHeight || width > reqWidth) {
-            if (width > height) {
-                inSampleSize = Math.round((float)height / (float)reqHeight);
-            } else {
-                inSampleSize = Math.round((float)width / (float)reqWidth);
+        try {
+            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null,
+                    null, MediaStore.Images.Media.DATE_TAKEN + " DESC");
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            column_index_folder_name = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                listOfAllImages.add(absolutePathOfImage);
             }
+
+            if (cursor != null) {
+                cursor.close();
+            }
+        } catch (Exception ex) {
+            Log.e("Content.Cursor", ex.getMessage());
         }
 
-        return inSampleSize;
+        return listOfAllImages;
     }
 }
