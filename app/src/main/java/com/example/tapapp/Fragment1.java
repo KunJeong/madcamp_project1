@@ -23,8 +23,9 @@ public class Fragment1 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_1, container, false);
-        GridView gridView = view.findViewById(R.id.gridview);
+        ExpandableGridView gridView = view.findViewById(R.id.gridview);
         gridView.setAdapter(new ImageAdapter(getActivity()));
+        gridView.setExpanded(true);
         return view;
     }
 

@@ -20,7 +20,17 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.p13, R.drawable.p14,
             R.drawable.p15, R.drawable.p16,
             R.drawable.p17, R.drawable.p18,
-            R.drawable.p19, R.drawable.p20
+            R.drawable.p19, R.drawable.p20,
+            R.drawable.p21, R.drawable.p22,
+            R.drawable.p23, R.drawable.p24,
+            R.drawable.p25, R.drawable.p26,
+            R.drawable.p27, R.drawable.p28,
+            R.drawable.p29, R.drawable.p30,
+            R.drawable.p31, R.drawable.p32,
+            R.drawable.p33, R.drawable.p34,
+            R.drawable.p35, R.drawable.p36,
+            R.drawable.p37, R.drawable.p38,
+            R.drawable.p39, R.drawable.p40,
     };
 
     public ImageAdapter(Context c) {
