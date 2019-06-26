@@ -35,27 +35,6 @@
             android:text="Additional" />
     </com.google.android.material.tabs.TabLayout>
 
-    <!--<view-->
-    <!--class="androidx.viewpager.widget.ViewPager"-->
-    <!--id="@+id/view"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="center"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="@id/tabLayout"-->
-    <!--app:layout_constraintTop_toTopOf="@id/tabLayout" />-->
-
-    <!--<fragment-->
-    <!--android:id="@+id/fragment0"-->
-    <!--android:name="com.example.tapapp.Fragment0"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="1dp"-->
-    <!--android:layout_weight="1"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/tabLayout"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent" />-->
-
     <FrameLayout
         android:id="@+id/fragment"
         android:layout_width="match_parent"
