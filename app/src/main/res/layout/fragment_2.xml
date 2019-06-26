@@ -4,12 +4,32 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/msg1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="50dp"
-        android:textStyle="italic"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="top|left"
         android:text="Fragment 2"
-        android:gravity="center"
-        />
+        android:textSize="24sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="What are you doing now?"/>
+
+    <Button
+        android:id="@+id/button"
+        android:text="Add Activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:id="@+id/lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>
