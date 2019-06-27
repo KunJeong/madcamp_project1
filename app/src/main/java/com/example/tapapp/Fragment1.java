@@ -14,7 +14,6 @@ import android.widget.PopupMenu;
 // import android.widget.GridView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
