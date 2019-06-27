@@ -24,6 +24,7 @@ public class Fragment1 extends Fragment {
 
     GalleryAdapter gallery;
     ImageView imageView;
+    ExpandableGridView gridView;
     public RequestManager mGlideRequestManager;
     public Fragment1() {
         // Empty Public Constructor
@@ -39,7 +40,7 @@ public class Fragment1 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_1, container, false);
-        ExpandableGridView gridView = view.findViewById(R.id.gridView);
+        gridView = view.findViewById(R.id.gridView);
         gallery = new GalleryAdapter(getActivity(), mGlideRequestManager);
         gridView.setAdapter(gallery);
         gridView.setExpanded(true);

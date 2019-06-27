@@ -128,6 +128,13 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+        if (getSupportFragmentManager().findFragmentById(R.id.fragment) instanceof Fragment1) {
+            Fragment1 fragment1 = new Fragment1();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment, fragment1);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     private void changeView(int index) {
