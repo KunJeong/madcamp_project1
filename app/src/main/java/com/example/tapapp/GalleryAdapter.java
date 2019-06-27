@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GalleryAdapter extends BaseAdapter {
@@ -93,7 +94,10 @@ public class GalleryAdapter extends BaseAdapter {
 
             while (cursor.moveToNext()) {
                 absolutePathOfImage = cursor.getString(column_index_data);
-                listOfAllImages.add(absolutePathOfImage);
+                File imgFile = new File(absolutePathOfImage);
+                if (imgFile.exists()) {
+                    listOfAllImages.add(absolutePathOfImage);
+                }
             }
 
             if (cursor != null) {

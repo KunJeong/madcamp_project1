@@ -54,20 +54,20 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (null != gallery.getImages() && !gallery.getImages().isEmpty()) {
-                    Snackbar.make(view, gallery.getImages().get(i), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
                     File imgFile = new File(gallery.getImages().get(i));
                     if (imgFile.exists()) {
+                        Snackbar.make(view, gallery.getImages().get(i), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                         Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                         imageView.setImageBitmap(bitmap);
+                        final ImagePopup imagePopup = new ImagePopup(getContext());
+                        imagePopup.setBackgroundColor(Color.argb(128,0,0,0));
+                        imagePopup.setFullScreen(true);
+                        imagePopup.setHideCloseIcon(true);
+                        imagePopup.setImageOnClickClose(true);
+                        imagePopup.initiatePopup(imageView.getDrawable());
+                        imagePopup.viewPopup();
                     }
-                    final ImagePopup imagePopup = new ImagePopup(getContext());
-                    imagePopup.setBackgroundColor(Color.argb(128,0,0,0));
-                    imagePopup.setFullScreen(true);
-                    imagePopup.setHideCloseIcon(true);
-                    imagePopup.setImageOnClickClose(true);
-                    imagePopup.initiatePopup(imageView.getDrawable());
-                    imagePopup.viewPopup();
                 }
             }
         });
@@ -111,11 +111,6 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
                     }
                     this.pos = -1;
                 }
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                transaction.replace(R.id.fragment, this);
-                transaction.addToBackStack(null);
-                transaction.commit();
                 return true;
              default:
                 return true;
