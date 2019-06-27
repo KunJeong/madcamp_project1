@@ -5,39 +5,46 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.example.tapapp.ExpandableGridView
-                android:id="@+id/gridView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="0dp"
-                android:columnWidth="120dp"
-                android:gravity="center"
-                android:horizontalSpacing="8dp"
-                android:numColumns="auto_fit"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="16dp"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="8dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            </com.example.tapapp.ExpandableGridView>
-        </RelativeLayout>
-    </ScrollView>
+                <com.example.tapapp.ExpandableGridView
+                    android:id="@+id/gridView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="0dp"
+                    android:columnWidth="120dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="8dp"
+                    android:numColumns="auto_fit"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="16dp"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="8dp">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ImageView>
+                </com.example.tapapp.ExpandableGridView>
+            </RelativeLayout>
+        </ScrollView>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ImageView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

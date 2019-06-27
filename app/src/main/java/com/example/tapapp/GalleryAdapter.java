@@ -92,11 +92,13 @@ public class GalleryAdapter extends BaseAdapter {
             column_index_folder_name = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
 
-            while (cursor.moveToNext()) {
+            int i = 0;
+            while (cursor.moveToNext() && i <= 100) {
                 absolutePathOfImage = cursor.getString(column_index_data);
                 File imgFile = new File(absolutePathOfImage);
                 if (imgFile.exists()) {
                     listOfAllImages.add(absolutePathOfImage);
+                    i++;
                 }
             }
 
