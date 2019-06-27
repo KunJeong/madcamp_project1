@@ -17,12 +17,17 @@
         android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:inputType="text"
-        android:hint="What are you doing now?"/>
+        android:hint="Alarm name..."/>
 
     <Button
         android:id="@+id/button"
         android:text="Add Alarm"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

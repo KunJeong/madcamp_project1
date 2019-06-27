@@ -10,6 +10,7 @@ import java.util.List;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -42,36 +43,40 @@ public class Fragment2 extends Fragment {
     private String formattedDate = df.format(c.getTime());
     private TextView textView1;
     private EditText editText;
+    private Button btn;
+    private ArrayAdapter<String> arrayAdapter;
+    private ListView lv;
 
-    final ArrayList<String> timestamp_list = new ArrayList<>();
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
+    Context context;
+
+    private ArrayList<String> timestamp_list = new ArrayList<>();
+    private AlarmManager alarmManager;
+    //private PendingIntent pendingIntent;
+    int count = 0;
+
     public Fragment2() {
 
     }
 
     @Override
-    public void onCreate (Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public void onCreate (Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        context = getActivity();
         View view = inflater.inflate(R.layout.fragment_2, container, false);
         textView1 = view.findViewById(R.id.msg1);
 
-        textView1.setText(formattedDate);
+        textView1.setText("0 alarms created");
         editText = view.findViewById(R.id.input);
-        Button btn = view.findViewById(R.id.button);
-        ListView lv = view.findViewById(R.id.lv);
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, timestamp_list);
+        btn = view.findViewById(R.id.button);
+        lv = view.findViewById(R.id.lv);
+        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, timestamp_list);
         lv.setAdapter(arrayAdapter);
 
 
-        alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
-        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
+
         
         OnClickListener listener = new OnClickListener() {
             public void onClick(View view) {
@@ -107,12 +112,16 @@ public class Fragment2 extends Fragment {
             Bundle bundle = msg.getData();
             timeHour = bundle.getInt(MyConstants.HOUR);
             timeMinute = bundle.getInt(MyConstants.MINUTE);
-            textView1.setText(timeHour + ":" + timeMinute);
+            textView1.setText((count + 1) +" alarms created");
             timestamp_list.add(timeHour + ":" + timeMinute + ", " + editText.getText());
             setAlarm();
+            arrayAdapter.notifyDataSetChanged();
         }
     }
     private void setAlarm(){
+            alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, count, alarmIntent, 0);
     		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
     		calendar.set(Calendar.HOUR_OF_DAY, timeHour);
     		calendar.set(Calendar.MINUTE, timeMinute);
@@ -121,6 +130,7 @@ public class Fragment2 extends Fragment {
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
+    		count ++;
     }
 
 }
