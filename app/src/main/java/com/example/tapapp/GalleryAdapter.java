@@ -2,7 +2,6 @@ package com.example.tapapp;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -11,26 +10,23 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 
 public class GalleryAdapter extends BaseAdapter {
 
     ArrayList<String> images;
+    RequestOptions reqOpt;
     private Context context;
     private final RequestManager glide;
 
     public GalleryAdapter(Context localContext, RequestManager mGlideRequestManager) {
         context = localContext;
         glide = mGlideRequestManager;
-//        images = new ArrayList<String>();
         images = getAllShownImagesPath(context);
-    }
-
-    public GalleryAdapter(Context localContext, RequestManager mGlideRequestManager, ArrayList<String> localImages) {
-        context = localContext;
-        glide = mGlideRequestManager;
-        images = localImages;
     }
 
     public ArrayList<String> getImages() {
@@ -56,13 +52,21 @@ public class GalleryAdapter extends BaseAdapter {
             picturesView = new ImageView(context);
             picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             picturesView
-                    .setLayoutParams(new ExpandableGridView.LayoutParams(240, 240));
+                    .setLayoutParams(new ExpandableGridView.LayoutParams(420, 420));
 
         } else {
             picturesView = (ImageView) convertView;
         }
 
+        reqOpt = RequestOptions
+                .fitCenterTransform()
+                .transform(new RoundedCorners(5))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(picturesView.getWidth(), picturesView.getHeight());
+
         glide.load(images.get(position))
+                .thumbnail(0.25f)
+                .apply(reqOpt)
                 .placeholder(R.mipmap.ic_launcher).centerCrop()
                 .into(picturesView);
 
@@ -70,7 +74,6 @@ public class GalleryAdapter extends BaseAdapter {
     }
 
     private ArrayList<String> getAllShownImagesPath(Context context) {
-        Uri uri;
         Cursor cursor;
         int column_index_data, column_index_folder_name;
         ArrayList<String> listOfAllImages = new ArrayList<String>();
@@ -80,7 +83,7 @@ public class GalleryAdapter extends BaseAdapter {
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME };
 
         try {
-            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null,
+            cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
                     null, MediaStore.Images.Media.DATE_TAKEN + " DESC");
             column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
             column_index_folder_name = cursor

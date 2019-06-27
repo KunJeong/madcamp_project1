@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 // import android.widget.GridView;
 
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.google.android.material.snackbar.Snackbar;
 
 public class Fragment1 extends Fragment {
 
@@ -34,15 +36,14 @@ public class Fragment1 extends Fragment {
         gridView.setAdapter(gallery);
         gridView.setExpanded(true);
 
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (null != gallery.getImages() && !gallery.getImages().isEmpty())
-//                    Toast.makeText(
-//                            getActivity(), "Position " + i + " " + gallery.getImages().get(i),
-//                            Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (null != gallery.getImages() && !gallery.getImages().isEmpty())
+                    Snackbar.make(view, gallery.getImages().get(i), Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
+            }
+        });
         return view;
     }
 }
