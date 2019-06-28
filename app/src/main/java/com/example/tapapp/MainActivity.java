@@ -1,11 +1,8 @@
 package com.example.tapapp;
 
-<<<<<<< HEAD
 import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
-=======
->>>>>>> f5b478bf56b65b20decffbac35a40d692fd50199
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,7 +11,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-<<<<<<< HEAD
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -24,9 +20,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-=======
-
->>>>>>> f5b478bf56b65b20decffbac35a40d692fd50199
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-<<<<<<< HEAD
         ActivityCompat.requestPermissions(this, new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
@@ -57,25 +49,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.add(R.id.fragment, new Fragment0());
         fragmentTransaction.commit();
-=======
-//        TabHost tabHost1 = findViewById(R.id.tabHost1);
-//        tabHost1.setup();
-//
-//        TabHost.TabSpec ts1 = tabHost1.newTabSpec("Tab Spec 1");
-//        ts1.setContent(R.id.content1);
-//        ts1.setIndicator("TAB 1");
-//        tabHost1.addTab(ts1);
-//
-//        TabHost.TabSpec ts2 = tabHost1.newTabSpec("Tab Spec 2");
-//        ts2.setContent(R.id.content2);
-//        ts2.setIndicator("TAB 2");
-//        tabHost1.addTab(ts2);
-//
-//        TabHost.TabSpec ts3 = tabHost1.newTabSpec("Tab Spec 3");
-//        ts3.setContent(R.id.content1);
-//        ts3.setIndicator("TAB 3");
-//        tabHost1.addTab(ts3);
->>>>>>> f5b478bf56b65b20decffbac35a40d692fd50199
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -100,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-<<<<<<< HEAD
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     File photoFile = null;
@@ -120,10 +92,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-=======
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
->>>>>>> f5b478bf56b65b20decffbac35a40d692fd50199
             }
         });
     }
@@ -169,12 +137,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changeView(int index) {
+        Fragment fragment;
         switch (index) {
             case 0 :
+                fragment = new Fragment0();
+                FragmentManager fm0 = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction0 = fm0.beginTransaction();
+                fragmentTransaction0.replace(R.id.fragment, fragment);
+                fragmentTransaction0.commit();
                 break;
             case 1 :
+                fragment = new Fragment1();
+                FragmentManager fm1 = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction1 = fm1.beginTransaction();
+                fragmentTransaction1.replace(R.id.fragment, fragment);
+                fragmentTransaction1.commit();
                 break;
             case 2 :
+                fragment = new Fragment2();
+                FragmentManager fm2 = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction2 = fm2.beginTransaction();
+                fragmentTransaction2.replace(R.id.fragment, fragment);
+                fragmentTransaction2.commit();
                 break;
         }
     }
