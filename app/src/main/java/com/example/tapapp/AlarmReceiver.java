@@ -14,11 +14,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         final Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
         ringtone.play();
-//        Handler handler = new Handler();
-//        handler.postDelayed(new Runnable() {
-//            public void run() {
-//                ringtone.stop();
-//            }
-//        }, 2000);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                ringtone.stop();
+            }
+        }, 2000);
     }
 }
