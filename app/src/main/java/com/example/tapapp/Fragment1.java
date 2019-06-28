@@ -138,10 +138,61 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
                             cropImage(photoUri);
                         }
                     }
+                    this.pos = -1;
+                }
+                return true;
+            case R.id.duplicate:
+                if (this.pos >= 0) {
+                    File imgFile = new File(gallery.getImages().get(this.pos));
+                    if (imgFile.exists()) {
+                        Uri photoUri = Uri.fromFile(imgFile);
+                        if (null != photoUri) {
+                            duplicateImage(photoUri);
+                        }
+                    }
+                    this.pos = -1;
                 }
                 return true;
             default:
+                this.pos = -1;
                 return true;
+        }
+    }
+
+    private void duplicateImage(Uri photoUri) {
+        File image = null;
+        Uri savingUri;
+        try {
+            image = createImageFile();
+        } catch (IOException ex) {
+            Snackbar.make(getView(), "Crop failed.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+
+        if (null != image && image.exists()) {
+            savingUri = Uri.fromFile(image);
+            if (null != savingUri) {
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                if (null != photoUri && Build.VERSION.SDK_INT >= 26) {
+                    File tempFile = new File(photoUri.getPath());
+                    File dscFile = new File(currentPhotoPath);
+                    try {
+                        FileOutputStream fileOutputStream = new FileOutputStream(dscFile, false);
+                        fileOutputStream.write(Files.readAllBytes(tempFile.toPath()));
+                        fileOutputStream.close();
+                    } catch (Exception ex) {
+                        Snackbar.make(getView(), "Saving failed.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                    intent.setData(Uri.fromFile(dscFile));
+                    getActivity().sendBroadcast(intent);
+                    Snackbar.make(getView(), "Saved successfully.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(getView(), "Saving failed.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
         }
     }
 
@@ -149,16 +200,7 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
         File image = null;
         Uri savingUri;
         try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp;
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/Camera";
-            File storageDir = new File(path);
-            image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
-            );
-            currentPhotoPath = image.getAbsolutePath();
+            image = createImageFile();
         } catch (IOException ex) {
             Snackbar.make(getView(), "Crop failed.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
@@ -170,6 +212,20 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
                 CropImage.activity(photoUri)
                         .start(getContext(), this);
         }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/Camera";
+        File storageDir = new File(path);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
