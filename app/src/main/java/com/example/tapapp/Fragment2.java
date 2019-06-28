@@ -16,6 +16,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,9 +77,6 @@ public class Fragment2 extends Fragment {
         arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, timestamp_list);
         lv.setAdapter(arrayAdapter);
 
-
-
-        
         OnClickListener listener = new OnClickListener() {
             public void onClick(View view) {
 //                textView2.setText("");
@@ -102,6 +101,23 @@ public class Fragment2 extends Fragment {
 //                editText.setText("");
 //                arrayAdapter.notifyDataSetChanged();
         };
+        editText.addTextChangedListener(new TextWatcher()
+        {
+            public void afterTextChanged(Editable s)
+            {
+                if(editText.length() == 0)
+                    btn.setEnabled(false); //disable send button if no text entered
+                else
+                    btn.setEnabled(true);  //otherwise enable
+
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){
+            }
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+            }
+        });
+        if(editText.length() == 0) btn.setEnabled(false);//disable at app start
+
         btn.setOnClickListener(listener);
 
         return view;
@@ -116,19 +132,27 @@ public class Fragment2 extends Fragment {
             timestamp_list.add(timeHour + ":" + timeMinute + ", " + editText.getText());
             setAlarm();
             arrayAdapter.notifyDataSetChanged();
+            editText.setText("");
         }
     }
     private void setAlarm(){
             alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
             Intent alarmIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, count, alarmIntent, 0);
-    		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-    		calendar.set(Calendar.HOUR_OF_DAY, timeHour);
-    		calendar.set(Calendar.MINUTE, timeMinute);
+    		Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+            schedule.set(Calendar.HOUR_OF_DAY, timeHour);
+            schedule.set(Calendar.MINUTE, timeMinute);
+            schedule.set(Calendar.SECOND, 0);
+            //if earlier than now, add 1 day
+    		Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+    		if(schedule.compareTo(current) < 0){
+    		    schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
+            }
+//    		textView1.setText(schedule.get(Calendar.DATE) + " " + current.get(Calendar.DATE));
     		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
             } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
             }
     		count ++;
     }
