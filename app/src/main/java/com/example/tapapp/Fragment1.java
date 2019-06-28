@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -30,6 +31,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -106,6 +109,21 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
     public void showPopup(View v, int i) {
         PopupMenu popup = new PopupMenu(getContext(), v);
         this.pos = i;
+        try {
+            Field[] fields = popup.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if ("mPopup".equals(field.getName())) {
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popup);
+                    Class<?> classPopupHelper = Class.forName(menuPopupHelper.getClass().getName());
+                    Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         popup.setOnMenuItemClickListener(this);
         popup.inflate(R.menu.menu_popup);
         popup.show();
@@ -148,6 +166,27 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
                         Uri photoUri = Uri.fromFile(imgFile);
                         if (null != photoUri) {
                             duplicateImage(photoUri);
+                        }
+                    }
+                    this.pos = -1;
+                }
+                return true;
+            case R.id.send:
+                if (this.pos >= 0) {
+                    File imgFile = new File(gallery.getImages().get(this.pos));
+                    if (imgFile.exists()) {
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("image/*");
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getContext(),
+                                "com.example.android.fileprovider",
+                                imgFile));
+                        Intent chooser = Intent.createChooser(intent, getContext().getString(R.string.share));
+                        if (null != intent.resolveActivity(getContext().getPackageManager())) {
+                            startActivity(chooser);
+                        } else {
+                            Snackbar.make(getView(), "Sending failed.", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
                         }
                     }
                     this.pos = -1;
