@@ -1,7 +1,6 @@
 package com.example.tapapp;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-// import android.widget.GridView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -117,7 +115,6 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.delete:
-                // should implement
                 if (this.pos >= 0) {
                     File imgFile = new File(gallery.getImages().get(this.pos));
                     if (imgFile.exists()) {
