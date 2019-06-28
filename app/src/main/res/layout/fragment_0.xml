@@ -5,13 +5,11 @@
     android:layout_marginTop="50dp"
     >
 
-    <TextView
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btpick_contact"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="50dp"
-        android:textStyle="bold"
-        android:text="Fragment 0"
-        android:gravity="center"
-        />
+        android:layout_gravity="center"
+        android:text="My contact list"></Button>
 
 </LinearLayout>
