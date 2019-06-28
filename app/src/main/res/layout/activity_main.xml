@@ -30,6 +30,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+<<<<<<< HEAD
         app:srcCompat="@android:drawable/ic_menu_camera" />
+=======
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+>>>>>>> f5b478bf56b65b20decffbac35a40d692fd50199
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
