@@ -126,10 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     this.sendBroadcast(intent);
                     Snackbar.make(findViewById(R.id.fragment), "Saved successfully.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                } else {
-                    Snackbar.make(findViewById(R.id.fragment), "Saving failed.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
+                } 
                 break;
             default:
                 break;
