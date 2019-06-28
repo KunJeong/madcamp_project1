@@ -6,8 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -124,17 +125,13 @@ public class MainActivity extends AppCompatActivity {
                     Uri contentUri = Uri.fromFile(f);
                     intent.setData(contentUri);
                     this.sendBroadcast(intent);
+                    Snackbar.make(findViewById(R.id.fragment), "Saved successfully.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(findViewById(R.id.fragment), "Saving failed.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
                 break;
-            case Crop.REQUEST_CROP:
-                if (resultCode == -1) {
-                    Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                    File f = new File(Crop.getOutput(data).getPath());
-                    Uri contentUri = Uri.fromFile(f);
-                    intent.setData(contentUri);
-                    this.sendBroadcast(intent);
-                    Log.e("Request Crop", "Success");
-                }
             default:
                 break;
         }

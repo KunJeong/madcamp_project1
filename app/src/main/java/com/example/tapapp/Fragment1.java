@@ -1,9 +1,12 @@
 package com.example.tapapp;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -24,10 +27,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.material.snackbar.Snackbar;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,6 +42,7 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
     ImageView imageView;
     ExpandableGridView gridView;
     SwipeRefreshLayout swipeRefreshLayout;
+    String currentPhotoPath;
     private int pos = -1;
     public RequestManager mGlideRequestManager;
     public Fragment1() {
@@ -155,6 +161,7 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
                     ".jpg",         /* suffix */
                     storageDir      /* directory */
             );
+            currentPhotoPath = image.getAbsolutePath();
         } catch (IOException ex) {
             Snackbar.make(getView(), "Crop failed.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
@@ -163,7 +170,42 @@ public class Fragment1 extends Fragment implements PopupMenu.OnMenuItemClickList
         if (null != image && image.exists()) {
             savingUri = Uri.fromFile(image);
             if (null != savingUri)
-                Crop.of(photoUri, savingUri).asSquare().start(getActivity());
+                CropImage.activity(photoUri)
+                        .start(getContext(), this);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CropImage
+                    .CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = result.getUri();
+                if (null != contentUri && Build.VERSION.SDK_INT >= 26) {
+                    File tempFile = new File(contentUri.getPath());
+                    File dscFile = new File(currentPhotoPath);
+                    try {
+                        FileOutputStream fileOutputStream = new FileOutputStream(dscFile, false);
+                        fileOutputStream.write(Files.readAllBytes(tempFile.toPath()));
+                        fileOutputStream.close();
+                    } catch (Exception ex) {
+                        Snackbar.make(getView(), "Saving failed.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                    intent.setData(Uri.fromFile(dscFile));
+                    getActivity().sendBroadcast(intent);
+                    Snackbar.make(getView(), "Saved successfully.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(getView(), "Saving failed.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                break;
+            default:
+                break;
         }
     }
 
