@@ -3,6 +3,7 @@ package com.example.tapapp;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
 
@@ -42,7 +45,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             titleView = v.findViewById(R.id.titletext);
             timeView = v.findViewById(R.id.timetext);
             ampmView = v.findViewById(R.id.timetext2);
-//            aSwitch = v.findViewById(R.id.switch1);
+            aSwitch = v.findViewById(R.id.switch1);
         }
     }
 
@@ -66,12 +69,34 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         holder.titleView.setText(alarms.get(Position)[2]);
         holder.timeView.setText(alarms.get(Position)[1]);
         holder.ampmView.setText(alarms.get(Position)[0]);
-//        holder.aSwitch.setChecked(true);
-//        holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                // Turn Off
-//            }
-//        });
+        holder.aSwitch.setChecked(true);
+        holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                // Turn Off
+                if (!b) {
+                    alarmManager.cancel(pendingIntents.get(position));
+                } else {
+                    String savedTime[] = alarms.get(position)[1].split(":");
+                    Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+                    if (alarms.get(position)[0].equals("PM")) {
+                        schedule.set(Calendar.HOUR_OF_DAY, Integer.parseInt(savedTime[0]) + 12);
+                    } else {
+                        schedule.set(Calendar.HOUR_OF_DAY, Integer.parseInt(savedTime[0]));
+                    }
+                    schedule.set(Calendar.MINUTE, Integer.parseInt(savedTime[1]));
+                    schedule.set(Calendar.SECOND, 0);
+                    Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+                    if(schedule.compareTo(current) < 0){
+                        schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntents.get(position));
+                    } else {
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntents.get(position));
+                    }
+                }
+            }
+        });
     }
 }

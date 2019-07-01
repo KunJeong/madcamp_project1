@@ -54,6 +54,7 @@ public class Fragment2 extends Fragment {
             deleteItem(position);
             alarmAdapter.notifyItemRemoved(position);
             alarmAdapter.notifyItemRangeChanged(position, alarmAdapter.getItemCount());
+            textView1.setText((count) + " alarms created");
         }
 
         @Override
@@ -95,7 +96,6 @@ public class Fragment2 extends Fragment {
                              Bundle savedInstanceState) {
         context = getActivity();
         alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmIntent = new Intent(context, AlarmReceiver.class);
         View view = inflater.inflate(R.layout.fragment_2, container, false);
         textView1 = view.findViewById(R.id.msg1);
 
@@ -236,6 +236,7 @@ public class Fragment2 extends Fragment {
     }
 
     private void setAlarm(){
+            alarmIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, code, alarmIntent, 0);
     		Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
             schedule.set(Calendar.HOUR_OF_DAY, timeHour);
