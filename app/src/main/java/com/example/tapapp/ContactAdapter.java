@@ -1,13 +1,10 @@
 package com.example.tapapp;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
     private Context context;
-    ArrayList<String[]> persons;
+    private ArrayList<String[]> persons;
     public ContactAdapter(Context mContext, ArrayList<String[]> data) {
         context = mContext;
         persons = data;
@@ -26,7 +23,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     private ItemClick itemClick;
     public interface ItemClick {
-        public void onClick(View view,int position);
+        void onClick(View view,int position);
     }
 
     public void setItemClick(ItemClick itemClick) {
@@ -71,9 +68,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         final int Position = position;
         holder.nameView.setText(persons.get(Position)[0]);
         holder.numberView.setText(persons.get(Position)[1]);
-        if (null != persons.get(position)[3]) {
-            holder.profileView.setImageURI(Uri.parse(persons.get(position)[3]));
-        }
+        holder.profileView.setImageResource(Integer.parseInt(persons.get(Position)[4]));
         holder.totalView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

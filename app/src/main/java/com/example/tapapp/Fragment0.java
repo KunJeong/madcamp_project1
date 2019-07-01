@@ -1,7 +1,6 @@
 package com.example.tapapp;
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -32,16 +31,24 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
     static final int PICK_CONTACT_REQUEST = 1;
     static final int PICK_EDIT_REQUEST = 2;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private int profileIndex = 0;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private ContactAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    public Integer[] images = new Integer[] {
+            R.drawable.adam, R.drawable.anjali,
+            R.drawable.arjun, R.drawable.jorge,
+            R.drawable.maya, R.drawable.rahul,
+            R.drawable.sadona, R.drawable.sandy,
+            R.drawable.sid, R.drawable.steve
+    };
     private SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
         @Override
         public void onRightClicked(int position) {
-            if (null != mAdapter.getData().get(position)[4]) {
+            if (null != mAdapter.getData().get(position)[3]) {
                 getContext().getContentResolver().delete(Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI,
-                        mAdapter.getData().get(position)[4]), null, null);
+                        mAdapter.getData().get(position)[3]), null, null);
                 Snackbar.make(getView(), "Deleted successfully.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -52,7 +59,7 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
 
         @Override
         public void onLeftClicked(int position) {
-            String currentLookupKey = mAdapter.getData().get(position)[4];
+            String currentLookupKey = mAdapter.getData().get(position)[3];
             String [] projection = new String [] { ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY };
             Cursor cur = getContext().getContentResolver().query
                     (ContactsContract.Contacts.CONTENT_URI, projection, null, null, null);
@@ -112,7 +119,7 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
         mAdapter.setItemClick(new ContactAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-                String currentLookupKey = mAdapter.getData().get(position)[4];
+                String currentLookupKey = mAdapter.getData().get(position)[3];
                 String [] projection = new String [] { ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY };
                 Cursor cur = getContext().getContentResolver().query
                         (ContactsContract.Contacts.CONTENT_URI, projection, null, null, null);
@@ -176,9 +183,13 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
                     data[1] = "0" + data[1].substring(3);
                 }
                 data[2] = contactCursor.getString(2);
-                int col = contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-                data[3] = contactCursor.getString(col);
-                data[4] = contactCursor.getString(4);
+                data[3] = contactCursor.getString(4);
+                data[4] = images[profileIndex].toString();
+                if (profileIndex == 9) {
+                    profileIndex = 0;
+                } else {
+                    profileIndex++;
+                }
                 persons.add(data);
             } while (contactCursor.moveToNext());
         }
