@@ -29,8 +29,8 @@ import java.util.ArrayList;
 
 public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    static final int PICK_CONTACT_REQUEST = 1;
-    static final int PICK_EDIT_REQUEST = 2;
+    private final int PICK_CONTACT_REQUEST = 2;
+    private final int PICK_EDIT_REQUEST = 3;
     private int profileIndex = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
@@ -201,15 +201,13 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case PICK_CONTACT_REQUEST:
-                if (requestCode == Activity.RESULT_OK) {
-                    mAdapter.notifyDataSetChanged();
+                if (resultCode == Activity.RESULT_OK) {
                     Snackbar.make(getView(), "Added successfully.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
                 break;
             case PICK_EDIT_REQUEST:
-                if (requestCode == Activity.RESULT_OK) {
-                    mAdapter.notifyDataSetChanged();
+                if (resultCode == Activity.RESULT_OK) {
                     Snackbar.make(getView(), "Edited successfully.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }

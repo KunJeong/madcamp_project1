@@ -4,35 +4,38 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.ListView;
 import android.view.ViewGroup;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -46,14 +49,25 @@ public class Fragment2 extends Fragment {
     private TextView textView1;
     private EditText editText;
     private Button btn;
-    private ArrayAdapter<String> arrayAdapter;
-    private ListView lv;
+    private AlarmAdapter alarmAdapter;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private SwipeController swipeController = new SwipeController(new SwipeControllerActions() {
+        @Override
+        public void onRightClicked(int position) {
+            // Alarm removing
+            deleteItem(position);
+            alarmAdapter.notifyItemRemoved(position);
+            alarmAdapter.notifyItemRangeChanged(position, alarmAdapter.getItemCount());
+        }
+    });
 
     Context context;
 
-    private ArrayList<String> timestamp_list = new ArrayList<>();
+    private ArrayList<String[]> timestamp_list = new ArrayList<>();
     private AlarmManager alarmManager;
-    //private PendingIntent pendingIntent;
+    private ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
+    private Intent alarmIntent;
     int count = 0;
 
     public Fragment2() {
@@ -67,17 +81,28 @@ public class Fragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context = getActivity();
+        alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        alarmIntent = new Intent(context, AlarmReceiver.class);
         View view = inflater.inflate(R.layout.fragment_2, container, false);
         textView1 = view.findViewById(R.id.msg1);
 
         textView1.setText("0 alarms created");
         editText = view.findViewById(R.id.input);
         btn = view.findViewById(R.id.button);
-        lv = view.findViewById(R.id.lv);
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_multiple_choice, timestamp_list);
-        lv.setAdapter(arrayAdapter);
-//        lv.setItemsCanFocus(true);
-//        lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        recyclerView = view.findViewById(R.id.rv);
+        alarmAdapter = new AlarmAdapter(getContext(), timestamp_list, alarmManager, pendingIntents);
+        recyclerView.setAdapter(alarmAdapter);
+        layoutManager = new LinearLayoutManager(getContext());
+        ((LinearLayoutManager) layoutManager).setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeController);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                swipeController.onDraw(c);
+            }
+        });
 
         OnClickListener listener = new OnClickListener() {
             public void onClick(View view) {
@@ -93,14 +118,6 @@ public class Fragment2 extends Fragment {
             }
         };
 
-//        AdapterView.OnItemClickListener listenerOfListView = new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> view, View view1, int pos,
-//                                    long arg3) {
-//                String value = timestamp_list.get(pos);
-//            }
-//        };
-//        lv.setOnItemClickListener(listenerOfListView);
-
         editText.addTextChangedListener(new TextWatcher()
         {
             public void afterTextChanged(Editable s)
@@ -108,17 +125,16 @@ public class Fragment2 extends Fragment {
                 if(editText.length() == 0)
                     btn.setEnabled(false); //disable send button if no text entered
                 else
-                    btn.setEnabled(true);  //otherwise enable
+                    btn.setEnabled(true); //otherwise enable
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
             }
             public void onTextChanged(CharSequence s, int start, int before, int count){
             }
         });
-        if(editText.length() == 0) btn.setEnabled(false);//disable at app start
+        if(editText.length() == 0) btn.setEnabled(false); //disable at app start
 
         btn.setOnClickListener(listener);
-
         return view;
     }
     class MyHandler extends Handler {
@@ -128,26 +144,41 @@ public class Fragment2 extends Fragment {
             timeHour = bundle.getInt(MyConstants.HOUR);
             timeMinute = bundle.getInt(MyConstants.MINUTE);
             textView1.setText((count + 1) +" alarms created");
-            timestamp_list.add(timeHour + ":" + timeMinute + ", " + editText.getText());
+            String[] data = new String[3];
+            if(timeHour > 12){
+                data[0] = ("PM");
+                timeHour -= 12;
+            }
+            else data[0] = ("AM");
+            if(timeHour == 0){
+                timeHour = 12;
+            }
+            data[1] = (timeHour + ":" + timeMinute);
+            data[2] = (editText.getText() + "");
+            timestamp_list.add(data);
+
             setAlarm();
-            arrayAdapter.notifyDataSetChanged();
+            alarmAdapter.notifyDataSetChanged();
             editText.setText("");
         }
     }
+
+    void deleteItem(int position){
+        timestamp_list.remove(position);
+        alarmManager.cancel(pendingIntents.remove(position));
+    }
+
     private void setAlarm(){
-            alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            Intent alarmIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, count, alarmIntent, 0);
     		Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
             schedule.set(Calendar.HOUR_OF_DAY, timeHour);
             schedule.set(Calendar.MINUTE, timeMinute);
             schedule.set(Calendar.SECOND, 0);
-            //if earlier than now, add 1 day
     		Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
     		if(schedule.compareTo(current) < 0){
     		    schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
             }
-//    		textView1.setText(schedule.get(Calendar.DATE) + " " + current.get(Calendar.DATE));
+            pendingIntents.add(pendingIntent);
     		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
             } else {
@@ -155,5 +186,4 @@ public class Fragment2 extends Fragment {
             }
     		count ++;
     }
-
 }
