@@ -7,14 +7,24 @@ import android.icu.text.Edits;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+<<<<<<< HEAD
 import android.os.Bundle;
+=======
+import android.os.Build;
+>>>>>>> e5257fa065e966a711266f6a3a43aa0751612573
 import android.os.Handler;
+import android.os.PowerManager;
+import android.os.Vibrator;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Iterator;
+=======
+import com.bumptech.glide.util.Util;
+>>>>>>> e5257fa065e966a711266f6a3a43aa0751612573
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
@@ -22,17 +32,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         final Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
         ringtone.play();
-//        Bundle data = intent.getExtras();
-//        ArrayList<Integer> index2code = data.getIntegerArrayList("index2code");
-//        int code = data.getInt("code");
-//        int i = 0;
-//        for(; i < index2code.size(); i++){
-//            if(index2code.get(i) == code){
-//                break;
-//            }
-//        }
 
-
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(3000);
 
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notification_channel_id")
 //                .setSmallIcon(R.drawable.ic_alarm_64px)
@@ -47,6 +49,11 @@ public class AlarmReceiver extends BroadcastReceiver {
             public void run() {
                 ringtone.stop();
             }
-        }, 2000);
+        }, 3000);
+
+        Intent alarmIntent = new Intent("com.example.tapapp.ALARM_ACTION");
+        alarmIntent.setClass(context, AlarmActivity.class);
+        alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(alarmIntent);
     }
 }
