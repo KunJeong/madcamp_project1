@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.WRITE_CONTACTS,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA
         }, 0);
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     this.sendBroadcast(intent);
                     Snackbar.make(findViewById(R.id.fragment), "Saved successfully.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                } 
+                }
                 break;
             default:
                 break;
