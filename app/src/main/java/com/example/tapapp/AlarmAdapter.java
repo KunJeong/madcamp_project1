@@ -42,7 +42,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             titleView = v.findViewById(R.id.titletext);
             timeView = v.findViewById(R.id.timetext);
             ampmView = v.findViewById(R.id.timetext2);
-            aSwitch = v.findViewById(R.id.switch1);
+//            aSwitch = v.findViewById(R.id.switch1);
         }
     }
 
@@ -66,12 +66,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         holder.titleView.setText(alarms.get(Position)[2]);
         holder.timeView.setText(alarms.get(Position)[1]);
         holder.ampmView.setText(alarms.get(Position)[0]);
-        holder.aSwitch.setChecked(true);
-        holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                // Turn Off
-            }
-        });
+//        holder.aSwitch.setChecked(true);
+//        holder.aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                // Turn Off
+//            }
+//        });
     }
 }
