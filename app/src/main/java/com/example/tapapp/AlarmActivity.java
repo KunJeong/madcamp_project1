@@ -1,12 +1,9 @@
 package com.example.tapapp;
 
 import android.content.Intent;
-import android.media.Ringtone;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AnalogClock;
 import android.widget.DigitalClock;
 
 import androidx.annotation.Nullable;
@@ -20,7 +17,6 @@ public class AlarmActivity extends AppCompatActivity {
         final Intent stopIntent = new Intent(this, RingtoneService.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
-        DigitalClock digitalClock = findViewById(R.id.digital);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |

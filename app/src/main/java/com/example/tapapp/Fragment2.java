@@ -39,8 +39,6 @@ public class Fragment2 extends Fragment {
     private int timeHour =  c.get(Calendar.HOUR_OF_DAY);
     private int timeMinute =  c.get(Calendar.MINUTE);
 
-    private SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-    private String formattedDate = df.format(c.getTime());
     private TextView textView1;
     private EditText editText;
     private Button btn;

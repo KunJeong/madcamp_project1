@@ -3,6 +3,7 @@ package com.example.tapapp;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlarmAdapter.AlarmViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final AlarmAdapter.AlarmViewHolder holder, final int position) {
         final int Position = position;
         holder.titleView.setText(alarms.get(Position)[2]);
         holder.timeView.setText(alarms.get(Position)[1]);
@@ -74,9 +75,17 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 // Turn Off
+                String disabled = "#D3D3D3";
+                String enabled = "#008577";
                 if (!b) {
+                    holder.titleView.setTextColor(Color.parseColor(disabled));
+                    holder.timeView.setTextColor(Color.parseColor(disabled));
+                    holder.ampmView.setTextColor(Color.parseColor(disabled));
                     alarmManager.cancel(pendingIntents.get(position));
                 } else {
+                    holder.titleView.setTextColor(Color.parseColor(enabled));
+                    holder.timeView.setTextColor(Color.parseColor(enabled));
+                    holder.ampmView.setTextColor(Color.parseColor(enabled));
                     String savedTime[] = alarms.get(position)[1].split(":");
                     Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
                     if (alarms.get(position)[0].equals("PM")) {
