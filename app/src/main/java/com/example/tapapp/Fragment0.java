@@ -1,6 +1,7 @@
 package com.example.tapapp;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -65,6 +66,7 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
                             if (Integer.valueOf(Build.VERSION.SDK_INT) > 14)
                                 editIntent.putExtra("finishActivityOnSaveCompleted", true);
                             startActivityForResult(editIntent, PICK_EDIT_REQUEST);
+                            mAdapter.notifyItemChanged(position);
                             break;
                         }
                     } while (cur.moveToNext());
@@ -107,6 +109,33 @@ public class Fragment0 extends Fragment implements SwipeRefreshLayout.OnRefreshL
             }
         });
         getList();
+        mAdapter.setItemClick(new ContactAdapter.ItemClick() {
+            @Override
+            public void onClick(View view, int position) {
+                String currentLookupKey = mAdapter.getData().get(position)[4];
+                String [] projection = new String [] { ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY };
+                Cursor cur = getContext().getContentResolver().query
+                        (ContactsContract.Contacts.CONTENT_URI, projection, null, null, null);
+                try {
+                    if (cur.moveToFirst()) {
+                        do {
+                            if (cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY)).equalsIgnoreCase(currentLookupKey)) {
+                                Uri selectedContactUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, currentLookupKey);
+                                Intent editIntent = new Intent(Intent.ACTION_VIEW, selectedContactUri);
+                                startActivity(editIntent);
+                                break;
+                            }
+                        } while (cur.moveToNext());
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getStackTrace());
+                    Snackbar.make(getView(), "Editing failed.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } finally {
+                    cur.close();
+                }
+            }
+        });
         recyclerView.setAdapter(mAdapter);
 
         FloatingActionButton fab = view.findViewById(R.id.contactFab);

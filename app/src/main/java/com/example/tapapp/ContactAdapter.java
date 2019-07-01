@@ -24,7 +24,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         persons = data;
     }
 
-    public static class ContactViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
+    private ItemClick itemClick;
+    public interface ItemClick {
+        public void onClick(View view,int position);
+    }
+
+    public void setItemClick(ItemClick itemClick) {
+        this.itemClick = itemClick;
+    }
+
+    public static class ContactViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         public View totalView;
         public TextView nameView;
@@ -37,11 +46,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             nameView = v.findViewById(R.id.nameText);
             numberView = v.findViewById(R.id.numberText);
             profileView = v.findViewById(R.id.profileView);
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            return true;
         }
     }
 
@@ -70,6 +74,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         if (null != persons.get(position)[3]) {
             holder.profileView.setImageURI(Uri.parse(persons.get(position)[3]));
         }
-        holder.totalView.setLongClickable(true);
+        holder.totalView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (null != itemClick) {
+                    itemClick.onClick(view, Position);
+                }
+            }
+        });
     }
 }
