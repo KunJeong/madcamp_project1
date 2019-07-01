@@ -74,12 +74,13 @@ public class Fragment2 extends Fragment {
         editText = view.findViewById(R.id.input);
         btn = view.findViewById(R.id.button);
         lv = view.findViewById(R.id.lv);
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, timestamp_list);
+        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_multiple_choice, timestamp_list);
         lv.setAdapter(arrayAdapter);
+//        lv.setItemsCanFocus(true);
+//        lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         OnClickListener listener = new OnClickListener() {
             public void onClick(View view) {
-//                textView2.setText("");
                 Bundle bundle = new Bundle();
                 bundle.putInt(MyConstants.HOUR, timeHour);
                 bundle.putInt(MyConstants.MINUTE, timeMinute);
@@ -90,17 +91,16 @@ public class Fragment2 extends Fragment {
                 transaction.add(fragment, "time_picker");
                 transaction.commit();
             }
-//                c = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-//                formattedDate = df.format(c.getTime());
-////                Bundle bundle = new Bundle();
-////                bundle.putInt(MyConstants.HOUR, timeHour);
-////                bundle.putInt(MyConstants.MINUTE, timeMinute);
-////                bundle.putInt(MyConstants.SECOND, timeSecond);
-////                bundle.putString(MyConstants.NAME, String.valueOf(editText.getText()));
-//                timestamp_list.add(formattedDate+ ", " + editText.getText());
-//                editText.setText("");
-//                arrayAdapter.notifyDataSetChanged();
         };
+
+//        AdapterView.OnItemClickListener listenerOfListView = new AdapterView.OnItemClickListener() {
+//            public void onItemClick(AdapterView<?> view, View view1, int pos,
+//                                    long arg3) {
+//                String value = timestamp_list.get(pos);
+//            }
+//        };
+//        lv.setOnItemClickListener(listenerOfListView);
+
         editText.addTextChangedListener(new TextWatcher()
         {
             public void afterTextChanged(Editable s)
@@ -109,7 +109,6 @@ public class Fragment2 extends Fragment {
                     btn.setEnabled(false); //disable send button if no text entered
                 else
                     btn.setEnabled(true);  //otherwise enable
-
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
             }
