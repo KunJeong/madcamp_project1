@@ -1,5 +1,6 @@
 package com.example.tapapp;
 
+import android.content.Intent;
 import android.media.Ringtone;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -16,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class AlarmActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        final Intent stopIntent = new Intent(this, RingtoneService.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
         AnalogClock analogClock = findViewById(R.id.analog);
@@ -28,6 +30,7 @@ public class AlarmActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                stopService(stopIntent);
                 finish();
             }
         });

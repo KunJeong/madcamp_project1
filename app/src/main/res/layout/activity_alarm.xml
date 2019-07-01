@@ -31,6 +31,7 @@
         android:id="@+id/alarmfab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:src="@drawable/close_icon"
         android:clickable="true"
         android:layout_margin="120dp"
         android:layout_gravity="bottom|center" />
