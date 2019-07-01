@@ -3,9 +3,11 @@ package com.example.tapapp;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,22 +19,29 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     private Context context;
     ArrayList<String[]> persons;
-    String thumbnailUri;
-    public ContactAdapter(Context mContext, ArrayList<String[]> data, String uri) {
+    public ContactAdapter(Context mContext, ArrayList<String[]> data) {
         context = mContext;
         persons = data;
-        thumbnailUri = uri;
     }
 
-    public static class ContactViewHolder extends RecyclerView.ViewHolder {
+    public static class ContactViewHolder extends RecyclerView.ViewHolder implements PopupMenu.OnMenuItemClickListener {
+        public Context context;
+        public View totalView;
         public TextView nameView;
         public TextView numberView;
         public ImageView profileView;
-        public ContactViewHolder(View v) {
+        public ContactViewHolder(View v, Context mContext) {
             super(v);
+            context = mContext;
+            totalView = v;
             nameView = v.findViewById(R.id.nameText);
             numberView = v.findViewById(R.id.numberText);
             profileView = v.findViewById(R.id.profileView);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            return true;
         }
     }
 
@@ -41,22 +50,26 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         return persons.size();
     }
 
+    public ArrayList<String[]> getData() { return persons; }
+
     @NonNull
     @Override
     public ContactAdapter.ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                 int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recyclerview_item, parent, false);
-        ContactViewHolder vh = new ContactViewHolder(v);
+        ContactViewHolder vh = new ContactViewHolder(v, context);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        holder.nameView.setText(persons.get(position)[0]);
-        holder.numberView.setText(persons.get(position)[1]);
-        if (null != thumbnailUri) {
-            holder.profileView.setImageURI(Uri.parse(thumbnailUri));
+    public void onBindViewHolder(@NonNull ContactViewHolder holder, final int position) {
+        final int Position = position;
+        holder.nameView.setText(persons.get(Position)[0]);
+        holder.numberView.setText(persons.get(Position)[1]);
+        if (null != persons.get(position)[3]) {
+            holder.profileView.setImageURI(Uri.parse(persons.get(position)[3]));
         }
+        holder.totalView.setLongClickable(true);
     }
 }
