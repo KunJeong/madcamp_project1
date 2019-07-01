@@ -51,7 +51,7 @@ public class Fragment2 extends Fragment {
         @Override
         public void onRightClicked(int position) {
             // Alarm removing
-            deleteItem(position);
+            deleteAlarm(position);
             alarmAdapter.notifyItemRemoved(position);
             alarmAdapter.notifyItemRangeChanged(position, alarmAdapter.getItemCount());
             textView1.setText((count) + " alarms created");
@@ -60,7 +60,6 @@ public class Fragment2 extends Fragment {
         @Override
         public void onLeftClicked(int position) {
             String savedTitle = alarmAdapter.getAlarms().get(position)[2];
-            deleteItem(position);
             alarmAdapter.notifyItemRemoved(position);
             alarmAdapter.notifyItemRangeChanged(position, alarmAdapter.getItemCount());
             Bundle bundle = new Bundle();
@@ -81,6 +80,7 @@ public class Fragment2 extends Fragment {
     private AlarmManager alarmManager;
     private ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
     private Intent alarmIntent;
+    private ArrayList<Integer> index2code = new ArrayList<>();
     int count = 0;
     int code = 0;
 
@@ -122,7 +122,7 @@ public class Fragment2 extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt(MyConstants.HOUR, timeHour);
                 bundle.putInt(MyConstants.MINUTE, timeMinute);
-                MyDialogFragment fragment = new MyDialogFragment(new MyHandler());
+                MyDialogFragment fragment = new MyDialogFragment(new AddHandler());
                 fragment.setArguments(bundle);
                 FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
@@ -131,18 +131,21 @@ public class Fragment2 extends Fragment {
             }
         };
 
+
         editText.addTextChangedListener(new TextWatcher()
         {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
             public void afterTextChanged(Editable s)
             {
                 if(editText.length() == 0)
                     btn.setEnabled(false); //disable send button if no text entered
                 else
                     btn.setEnabled(true); //otherwise enable
-            }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){
-            }
-            public void onTextChanged(CharSequence s, int start, int before, int count){
             }
         });
         if(editText.length() == 0) btn.setEnabled(false); //disable at app start
@@ -151,7 +154,7 @@ public class Fragment2 extends Fragment {
         return view;
     }
 
-    class MyHandler extends Handler {
+    class AddHandler extends Handler {
         @Override
         public void handleMessage (Message msg){
             Bundle bundle = msg.getData();
@@ -178,9 +181,9 @@ public class Fragment2 extends Fragment {
                 data[1] = (fixedHour + ":" + timeMinute);
             }
             data[2] = (editText.getText() + "");
-            timestamp_list.add(data);
 
-            setAlarm();
+            addAlarm(data);
+
             alarmAdapter.notifyDataSetChanged();
             editText.setText("");
         }
@@ -221,37 +224,54 @@ public class Fragment2 extends Fragment {
                 data[1] = (fixedHour + ":" + timeMinute);
             }
             data[2] = this.title;
-            timestamp_list.add(this.position, data);
 
-            setAlarm();
+            editAlarm(position, data);
+
             alarmAdapter.notifyItemChanged(this.position);
             alarmAdapter.notifyDataSetChanged();
         }
     }
 
-    void deleteItem(int position){
+    void deleteAlarm(int position){
         count--;
         timestamp_list.remove(position);
-        alarmManager.cancel(pendingIntents.remove(position));
+        index2code.remove(position);
+        alarmManager.cancel(pendingIntents.get(position));
     }
 
-    private void setAlarm(){
+    void editAlarm(int position, String[] data){
+        timestamp_list.set(position, data);
+        index2code.set(position, code);
+        alarmManager.cancel(pendingIntents.get(position));
+        addAlarm(data);
+    }
+
+    void addAlarm(String[] data){
+            timestamp_list.add(data);
             alarmIntent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, code, alarmIntent, 0);
+            Bundle bundle = new Bundle();
+            bundle.putIntegerArrayList("index2code", index2code);
+            bundle.putInt("code", code);
+            alarmIntent.putExtra("bundle", bundle);
     		Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
             schedule.set(Calendar.HOUR_OF_DAY, timeHour);
             schedule.set(Calendar.MINUTE, timeMinute);
             schedule.set(Calendar.SECOND, 0);
     		Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+
     		if(schedule.compareTo(current) < 0){
     		    schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
             }
             pendingIntents.add(pendingIntent);
+
     		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
             } else {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
             }
+
+    		index2code.add(code);
     		count++;
     		code++;
     }
