@@ -20,7 +20,6 @@ public class AlarmActivity extends AppCompatActivity {
         final Intent stopIntent = new Intent(this, RingtoneService.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
-        AnalogClock analogClock = findViewById(R.id.analog);
         DigitalClock digitalClock = findViewById(R.id.digital);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
