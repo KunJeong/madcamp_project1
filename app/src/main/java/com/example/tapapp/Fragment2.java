@@ -201,7 +201,7 @@ public class Fragment2 extends Fragment {
             Bundle bundle = msg.getData();
             timeHour = bundle.getInt(MyConstants.HOUR);
             timeMinute = bundle.getInt(MyConstants.MINUTE);
-            textView1.setText((count + 1) +" alarms created");
+            textView1.setText((count) +" alarms created");
             String[] data = new String[3];
             int fixedHour;
             if(timeHour >= 12){
@@ -241,36 +241,63 @@ public class Fragment2 extends Fragment {
         timestamp_list.set(position, data);
         index2code.set(position, code);
         alarmManager.cancel(pendingIntents.get(position));
-        addAlarm(data);
+        addAlarmForEdit();
     }
 
     void addAlarm(String[] data){
-            timestamp_list.add(data);
-            alarmIntent = new Intent(context, AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, code, alarmIntent, 0);
-            Bundle bundle = new Bundle();
-            bundle.putIntegerArrayList("index2code", index2code);
-            bundle.putInt("code", code);
-            alarmIntent.putExtra("bundle", bundle);
-    		Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
-            schedule.set(Calendar.HOUR_OF_DAY, timeHour);
-            schedule.set(Calendar.MINUTE, timeMinute);
-            schedule.set(Calendar.SECOND, 0);
-    		Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+        timestamp_list.add(data);
+        alarmIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, code, alarmIntent, 0);
+        Bundle bundle = new Bundle();
+        bundle.putIntegerArrayList("index2code", index2code);
+        bundle.putInt("code", code);
+        alarmIntent.putExtra("bundle", bundle);
+        Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+        schedule.set(Calendar.HOUR_OF_DAY, timeHour);
+        schedule.set(Calendar.MINUTE, timeMinute);
+        schedule.set(Calendar.SECOND, 0);
+        Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
-    		if(schedule.compareTo(current) < 0){
-    		    schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
-            }
-            pendingIntents.add(pendingIntent);
+        if(schedule.compareTo(current) < 0){
+            schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
+        }
+        pendingIntents.add(pendingIntent);
 
-    		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
+        }
 
-    		index2code.add(code);
-    		count++;
-    		code++;
+        index2code.add(code);
+        count++;
+        code++;
+    }
+
+    void addAlarmForEdit(){
+        alarmIntent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, code, alarmIntent, 0);
+        Bundle bundle = new Bundle();
+        bundle.putIntegerArrayList("index2code", index2code);
+        bundle.putInt("code", code);
+        alarmIntent.putExtra("bundle", bundle);
+        Calendar schedule = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+        schedule.set(Calendar.HOUR_OF_DAY, timeHour);
+        schedule.set(Calendar.MINUTE, timeMinute);
+        schedule.set(Calendar.SECOND, 0);
+        Calendar current = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
+
+        if(schedule.compareTo(current) < 0){
+            schedule.set(Calendar.DATE, schedule.get(Calendar.DATE) + 1);
+        }
+        pendingIntents.add(pendingIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, schedule.getTimeInMillis(), pendingIntent);
+        }
+
+        code++;
     }
 }
