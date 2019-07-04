@@ -234,13 +234,13 @@ public class Fragment2 extends Fragment {
         count--;
         timestamp_list.remove(position);
         index2code.remove(position);
-        alarmManager.cancel(pendingIntents.get(position));
+        alarmManager.cancel(pendingIntents.get(index2code.get(position)));
     }
 
     void editAlarm(int position, String[] data){
         timestamp_list.set(position, data);
+        alarmManager.cancel(pendingIntents.get(index2code.get(position)));
         index2code.set(position, code);
-        alarmManager.cancel(pendingIntents.get(position));
         addAlarmForEdit();
     }
 
